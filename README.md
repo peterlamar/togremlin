@@ -1,2 +1,4 @@
 # togremlin
-Convert data to Gremlin Tinkerpop format
+
+Convert data to Gremlin [Tinkerpop](http://tinkerpop.apache.org/) format for
+ingestion into multiple graphs.

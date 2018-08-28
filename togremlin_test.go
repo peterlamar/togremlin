@@ -10,14 +10,20 @@ func TestTranslate(t *testing.T) {
 
 	rawInput := []byte(`<?xml version="1.0" encoding="UTF-8"?>
    - <note>
-          <timestamp>2018-08-25T18:42:58+00:00</time>
+          <timestamp>2018-08-25T18:42:58+00:00</timestamp>
          <to>Humans</to>
          <from>Dolphins</from>
          <heading>So Long</heading>
          <body>Thanks for all the fish!</body>
      </note>`)
 
-	rtnData := translate(rawInput)
+	gremlinKeys := []byte(`{
+	"note": {
+		"timestamp": "_key"
+	}
+}`)
+
+	rtnData := Translate(rawInput, gremlinKeys)
 
 	expectedReturn := map[string][]map[string]interface{}{
 		"note": []map[string]interface{}{
@@ -26,12 +32,15 @@ func TestTranslate(t *testing.T) {
 				"to":        "Humans",
 				"from":      "Dolphins",
 				"heading":   "So Long",
+				"_key":      "2018-08-25T18:42:58+00:00",
 			},
 		},
 	}
 
 	eq := cmp.Equal(rtnData, expectedReturn)
+
 	if !eq {
 		t.Errorf("translate return value was incorrect")
 	}
+
 }
