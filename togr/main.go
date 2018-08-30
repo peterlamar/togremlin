@@ -3,35 +3,54 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
+
+	"github.com/dinedal/textql/util"
+	"github.com/peterlamar/togremlin/gremlin"
 )
 
-func main() {
+type commandLineOptions struct {
+	SourceFile *string
+	KeyFile    *string
+}
 
-	inputfile := flag.String("file", "", "Grab File")
+func newCommandLineOptions() *commandLineOptions {
+	cmdLineOpts := commandLineOptions{}
+	cmdLineOpts.SourceFile = flag.String("source", "", "Filename to retrieve data from")
+	cmdLineOpts.KeyFile = flag.String("key", "", "Filename to retreive graph key information from")
 
-	keyfile := flag.String("key", "", "Key File")
-
+	flag.Usage = cmdLineOpts.Usage
 	flag.Parse()
 
-	// Hop out if either file is void
-	if len(*inputfile) > 0 && len(*keyfile) > 0 {
+	return &cmdLineOpts
+}
 
-		fileData, err := ioutil.ReadFile(*inputfile)
+func (clo *commandLineOptions) GetSourceFile() string {
+	return *clo.SourceFile
+}
+func (clo *commandLineOptions) GetKeyFile() string {
+	return *clo.KeyFile
+}
 
-		if err != nil {
-			fmt.Println("Can't read file:", os.Args[1])
-			panic(err)
-		}
+func (clo *commandLineOptions) Usage() {
+	fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
+	fmt.Fprintf(os.Stderr, "\n")
+	fmt.Fprintf(os.Stderr, "  %s [-key pathtokeyfile] [-source pathtosourcefile] \n", os.Args[0])
+	fmt.Fprintf(os.Stderr, "\n")
+	flag.PrintDefaults()
+}
 
-		keyData, err := ioutil.ReadFile(*keyfile)
+func main() {
+	cmdLineOpts := newCommandLineOptions()
 
-		if err != nil {
-			fmt.Println("Can't read file:", os.Args[2])
-			panic(err)
-		}
-
-		_ = Translate(fileData, keyData)
+	if cmdLineOpts.GetSourceFile() == "" || cmdLineOpts.GetKeyFile() == "" {
+		cmdLineOpts.Usage()
+		return
 	}
+
+	if cmdLineOpts.GetSourceFile() != "" {
+		fp := util.OpenFileOrStdDev(cmdLineOpts.GetSourceFile(), false)
+		_ = gremlin.Translate(fp, fp)
+	}
+
 }
