@@ -1,6 +1,7 @@
 package gremlin
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -14,7 +15,7 @@ func TestTranslate(t *testing.T) {
          <to>Humans</to>
          <from>Dolphins</from>
          <heading>So Long</heading>
-         <body>Thanks for all the fish!</body>
+         <body>Thanks for All the Fish!</body>
      </note>`)
 
 	gremlinKeys := []byte(`{
@@ -32,6 +33,7 @@ func TestTranslate(t *testing.T) {
 				"to":        "Humans",
 				"from":      "Dolphins",
 				"heading":   "So Long",
+				"body":      "Thanks for All the Fish!",
 				"_key":      "2018-08-25T18:42:58+00:00",
 			},
 		},
@@ -41,6 +43,6 @@ func TestTranslate(t *testing.T) {
 
 	if !eq {
 		t.Errorf("translate return value was incorrect")
+		fmt.Println(cmp.Diff(expectedReturn, rtnData))
 	}
-
 }
