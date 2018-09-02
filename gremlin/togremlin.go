@@ -17,8 +17,34 @@ const gremlinEdgeTo = "_to"
 // prefix for graph edge relationship
 const graphParentVerb = "_has"
 
+// Translate data structure as is
+func Translate(input interface{}) map[string][]map[string]interface{} {
+	rtn := make(map[string][]map[string]interface{})
+
+	switch v := input.(type) {
+	case []uint8:
+		s := reflect.ValueOf(input)
+
+		// Unmarshal to [map]interface{}
+		mvj, err := mxj.NewMapXml(s.Bytes())
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		var emptyGrmData gremlinData
+
+		translateNodesRecursive(mvj, "", emptyGrmData, rtn)
+
+	default:
+		fmt.Printf("Translate doesn't handle type %T!\n", v)
+	}
+
+	return rtn
+}
+
 // Translate data structure into hash map of json array objects
-func Translate(input interface{},
+func TranslateWithKey(input interface{},
 	keys interface{}) map[string][]map[string]interface{} {
 
 	var rtn map[string][]map[string]interface{}
@@ -70,13 +96,11 @@ func translateNodesRecursive(m map[string]interface{}, parent string,
 	}
 
 	if _, ok := rtnMap[parent]; ok {
-
 		// Create edge nodes and load them into memory.
 		createParentEdges(t, parent, grmData, rtnMap)
 
 		// Add node to collection
 		rtnMap[parent] = append(rtnMap[parent], t)
-
 	}
 
 	// Go through loop and now handle struct and arrays
@@ -122,15 +146,12 @@ func makeMemoryForNode(parent string,
 		return
 	}
 
-	// If the node exists, no need to allocate memory
+	// If the node already exists, no need to allocate memory
 	if _, ok := rtnMap[parent]; ok {
 		return
 	}
 
-	// Check if its a key value, then memory is needed
-	if hasKey(grmData, parent) {
-		rtnMap[parent] = make([]map[string]interface{}, 0)
-	}
+	rtnMap[parent] = make([]map[string]interface{}, 0)
 }
 
 // Check if we need to make a parent/child edge and create it if necessary

@@ -43,14 +43,14 @@ func (clo *commandLineOptions) Usage() {
 func main() {
 	cmdLineOpts := newCommandLineOptions()
 
-	if cmdLineOpts.GetSourceFile() == "" || cmdLineOpts.GetKeyFile() == "" {
+	if cmdLineOpts.GetSourceFile() == "" {
 		cmdLineOpts.Usage()
 		return
 	}
 
-	if cmdLineOpts.GetSourceFile() != "" {
+	if cmdLineOpts.GetSourceFile() != "" && cmdLineOpts.GetKeyFile() == "" {
 		fp := util.OpenFileOrStdDev(cmdLineOpts.GetSourceFile(), false)
-		_ = gremlin.Translate(fp, fp)
+		_ = gremlin.Translate(fp)
 	}
 
 }
