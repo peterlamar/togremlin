@@ -3,10 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"os"
 
-	"github.com/dinedal/textql/util"
 	"github.com/peterlamar/togremlin/gremlin"
+	"github.com/peterlamar/togremlin/output"
 )
 
 type commandLineOptions struct {
@@ -49,8 +50,17 @@ func main() {
 	}
 
 	if cmdLineOpts.GetSourceFile() != "" && cmdLineOpts.GetKeyFile() == "" {
-		fp := util.OpenFileOrStdDev(cmdLineOpts.GetSourceFile(), false)
-		_ = gremlin.Translate(fp)
+
+		fileData, err := ioutil.ReadFile(cmdLineOpts.GetSourceFile())
+		if err != nil {
+			fmt.Println("Can't read file:", os.Args[1])
+			panic(err)
+		}
+
+		graphData := gremlin.Translate(fileData)
+
+		// Commit data to disk in multiple files
+		output.WriteNodes(graphData)
 	}
 
 }
