@@ -36,6 +36,15 @@ func Translate(input interface{}) map[string][]map[string]interface{} {
 
 		translateNodesRecursive(mvj, "", emptyGrmData, rtn)
 
+		// Remove nodes with empty values
+		for k, v := range rtn {
+			for _, mv := range v {
+				if len(mv) == 0 {
+					delete(rtn, k)
+				}
+			}
+		}
+
 	default:
 		fmt.Printf("Translate doesn't handle type %T!\n", v)
 	}
