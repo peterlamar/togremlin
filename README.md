@@ -1,7 +1,7 @@
 # togremlin
 
 Convert data to Gremlin [Tinkerpop](http://tinkerpop.apache.org/) format for
-ingestion into multiple supported data stores.
+ingestion into gremlin format supported graph databases.
 
 Example usage
 
