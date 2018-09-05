@@ -7,7 +7,6 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-/*
 func TestTranslateWtihKey(t *testing.T) {
 
 	rawInput := []byte(`<?xml version="1.0" encoding="UTF-8"?>
@@ -79,7 +78,7 @@ func TestTranslate(t *testing.T) {
 		fmt.Println(cmp.Diff(expectedReturn, rtnData))
 	}
 }
-*/
+
 func TestTranslateTwoMessages(t *testing.T) {
 	rawInput := []byte(`<?xml version="1.0" encoding="UTF-8"?>
 		<notes>

@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
- - <note>
-        <timestamp>2018-08-25T18:42:58+00:00 </timestamp>
-       <to>Humans</to>
-       <from>Dolphins</from>
-       <heading>So Long</heading>
-       <body>Thanks for all the fish!</body>
-   </note>
+  <notes>
+     <note>
+        <timestamp>2018-08-25T18:42:58+00:00</timestamp>
+        <to>Humans</to>
+        <from>Dolphins</from>
+        <heading>So Long</heading>
+        <body>Thanks for All the Fish!</body>
+     </note>
+     <note>
+        <timestamp>2018-09-25T02:30:28+00:00</timestamp>
+        <to>Humans</to>
+        <from>Douglas Adams</from>
+        <heading>Space</heading>
+        <body>Space is big. You just won't believe how vastly, hugely, mind- bogglingly big it is. I mean, you may think it is a long way down the road to the chemists, but thats just peanuts to space.</body>
+     </note>
+  </notes>
