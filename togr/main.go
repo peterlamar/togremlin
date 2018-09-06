@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/peterlamar/togremlin/fileutil"
 	"github.com/peterlamar/togremlin/gremlin"
 )
 

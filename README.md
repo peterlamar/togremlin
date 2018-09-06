@@ -53,7 +53,7 @@ cat output/note.json
 In order to generate data for a proper graph database, edges are needed. In order to have edges, we need to specify fields in our xml as key values. This can be done by creating an additional key json that declares what fields we wish to be used as key fields. These fields are then duplicated and an additional edge node is generated between the data items.
 
 ```
-./togr --source ../sampledata/miniwithedge.xml ../sampledata/hichhikerkey.json
+./togr --source ../sampledata/miniwithedge.xml ../sampledata/hitchhikerkey.json
 ```
 
 miniwithedge.xml
