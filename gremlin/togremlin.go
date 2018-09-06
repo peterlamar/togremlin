@@ -160,7 +160,16 @@ func makeMemoryForNode(parent string,
 		return
 	}
 
-	rtnMap[parent] = make([]map[string]interface{}, 0)
+	// If we have no keys then allocate the memory
+	if len(grmData.Keys) == 0 {
+		rtnMap[parent] = make([]map[string]interface{}, 0)
+		return
+	}
+
+	if hasKey(grmData, parent) {
+		rtnMap[parent] = make([]map[string]interface{}, 0)
+	}
+
 }
 
 // Check if we need to make a parent/child edge and create it if necessary

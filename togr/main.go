@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/peterlamar/togremlin/gremlin"
-	"github.com/peterlamar/togremlin/output"
 )
 
 type commandLineOptions struct {
@@ -60,7 +59,7 @@ func main() {
 		graphData := gremlin.Translate(fileData)
 
 		// Commit data to disk in multiple files
-		output.WriteNodes(graphData)
+		fileutil.WriteNodes(graphData)
 	}
 
 }
