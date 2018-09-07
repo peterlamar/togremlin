@@ -49,18 +49,28 @@ func main() {
 		return
 	}
 
-	if cmdLineOpts.GetSourceFile() != "" && cmdLineOpts.GetKeyFile() == "" {
+	fileData, err := ioutil.ReadFile(cmdLineOpts.GetSourceFile())
+	if err != nil {
+		fmt.Println("Can't read file:", os.Args[1])
+		panic(err)
+	}
 
-		fileData, err := ioutil.ReadFile(cmdLineOpts.GetSourceFile())
-		if err != nil {
-			fmt.Println("Can't read file:", os.Args[1])
-			panic(err)
-		}
+	if cmdLineOpts.GetKeyFile() == "" {
 
 		graphData := gremlin.Translate(fileData)
 
 		// Commit data to disk in multiple files
 		fileutil.WriteNodes(graphData)
-	}
+	} else {
+		gremlinKeys, err := ioutil.ReadFile(cmdLineOpts.GetKeyFile())
+		if err != nil {
+			fmt.Println("Can't read file:", os.Args[1])
+			panic(err)
+		}
 
+		graphData := gremlin.TranslateWithKey(fileData, gremlinKeys)
+
+		// Commit data to disk in multiple files
+		fileutil.WriteNodes(graphData)
+	}
 }
