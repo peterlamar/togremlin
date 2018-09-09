@@ -151,6 +151,17 @@ needed they many be accommodated as well.
 go get -u github.com/peterlamar/togremlin/...
 ```
 
+## Docker
+First build the image.
+```bash
+docker build -t togr .
+```
+Now use that image mounting your current directory into the container.
+```bash
+docker run --rm -it -v $(pwd):/tmp togr [rest_of_command]
+```
+
+
 ## Usage
 
 ```bash
