@@ -17,8 +17,8 @@ const gremlinEdgeTo = "_to"
 // prefix for graph edge relationship
 const graphParentVerb = "_has"
 
-// Translate data structure as is
-func Translate(input interface{}) map[string][]map[string]interface{} {
+// TranslateXML data structure as is
+func TranslateXML(input interface{}) map[string][]map[string]interface{} {
 	rtn := make(map[string][]map[string]interface{})
 
 	switch v := input.(type) {
@@ -34,7 +34,7 @@ func Translate(input interface{}) map[string][]map[string]interface{} {
 
 		var emptyGrmData gremlinData
 
-		translateNodesRecursive(mvj, "", emptyGrmData, rtn)
+		translateXMLNodesRecursive(mvj, "", emptyGrmData, rtn)
 
 		// Remove nodes with empty values
 		for k, v := range rtn {
@@ -46,14 +46,14 @@ func Translate(input interface{}) map[string][]map[string]interface{} {
 		}
 
 	default:
-		fmt.Printf("Translate doesn't handle type %T!\n", v)
+		fmt.Printf("TranslateXML doesn't handle type %T!\n", v)
 	}
 
 	return rtn
 }
 
-// Translate data structure into hash map of json array objects
-func TranslateWithKey(input interface{},
+// TranslateXML data structure into hash map of json array objects
+func TranslateXMLWithKey(input interface{},
 	keys interface{}) map[string][]map[string]interface{} {
 
 	var rtn map[string][]map[string]interface{}
@@ -69,30 +69,30 @@ func TranslateWithKey(input interface{},
 			log.Fatal(err)
 		}
 
-		rtn = translateNodes(mvj, keys, "")
+		rtn = translateXMLNodes(mvj, keys, "")
 
 	default:
-		fmt.Printf("Translate doesn't handle type %T!\n", v)
+		fmt.Printf("TranslateXML doesn't handle type %T!\n", v)
 	}
 
 	return rtn
 }
 
-// Translate nodes into the graph output
-func translateNodes(m map[string]interface{}, keyFile interface{},
+// TranslateXML nodes into the graph output
+func translateXMLNodes(m map[string]interface{}, keyFile interface{},
 	parent string) map[string][]map[string]interface{} {
 
 	grmData := getKeyData(keyFile)
 
 	rtn := make(map[string][]map[string]interface{})
 
-	translateNodesRecursive(m, "", grmData, rtn)
+	translateXMLNodesRecursive(m, "", grmData, rtn)
 
 	return rtn
 }
 
 // Travel nodes and build the gremlin graph data structure
-func translateNodesRecursive(m map[string]interface{}, parent string,
+func translateXMLNodesRecursive(m map[string]interface{}, parent string,
 	grmData gremlinData, rtnMap map[string][]map[string]interface{}) {
 
 	// if parent is not null and we don't have it in our map, make some room
@@ -117,13 +117,13 @@ func translateNodesRecursive(m map[string]interface{}, parent string,
 		// If memeber is another json struct
 		if mv, ok := v.(map[string]interface{}); ok {
 
-			translateNodesRecursive(mv, k, grmData, rtnMap)
+			translateXMLNodesRecursive(mv, k, grmData, rtnMap)
 			// If member is json array
 		} else if mvs, ok := v.([]interface{}); ok {
 
 			for _, mv := range mvs {
 				if mv, ok := mv.(map[string]interface{}); ok {
-					translateNodesRecursive(mv, k, grmData, rtnMap)
+					translateXMLNodesRecursive(mv, k, grmData, rtnMap)
 				}
 			}
 		}

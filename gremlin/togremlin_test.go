@@ -7,7 +7,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func TestTranslateWtihKey(t *testing.T) {
+func TestTranslateXMLWtihKey(t *testing.T) {
 
 	rawInput := []byte(`<?xml version="1.0" encoding="UTF-8"?>
 	        <note>
@@ -24,7 +24,7 @@ func TestTranslateWtihKey(t *testing.T) {
 	   	}
 	   }`)
 
-	rtnData := TranslateWithKey(rawInput, gremlinKeys)
+	rtnData := TranslateXMLWithKey(rawInput, gremlinKeys)
 
 	expectedReturn := map[string][]map[string]interface{}{
 		"note": []map[string]interface{}{
@@ -42,12 +42,12 @@ func TestTranslateWtihKey(t *testing.T) {
 	eq := cmp.Equal(rtnData, expectedReturn)
 
 	if !eq {
-		t.Errorf("TranslateWithKey return value was incorrect")
+		t.Errorf("TranslateXMLWithKey return value was incorrect")
 		fmt.Println(cmp.Diff(expectedReturn, rtnData))
 	}
 }
 
-func TestTranslate(t *testing.T) {
+func TestTranslateXML(t *testing.T) {
 	rawInput := []byte(`<?xml version="1.0" encoding="UTF-8"?>
 	 - <note>
 					<timestamp>2018-08-25T18:42:58+00:00</timestamp>
@@ -57,7 +57,7 @@ func TestTranslate(t *testing.T) {
 				 <body>Thanks for All the Fish!</body>
 		 </note>`)
 
-	rtnData := Translate(rawInput)
+	rtnData := TranslateXML(rawInput)
 
 	expectedReturn := map[string][]map[string]interface{}{
 		"note": []map[string]interface{}{
@@ -74,12 +74,12 @@ func TestTranslate(t *testing.T) {
 	eq := cmp.Equal(rtnData, expectedReturn)
 
 	if !eq {
-		t.Errorf("translate return value was incorrect")
+		t.Errorf("translateXML return value was incorrect")
 		fmt.Println(cmp.Diff(expectedReturn, rtnData))
 	}
 }
 
-func TestTranslateTwoMessages(t *testing.T) {
+func TestTranslateXMLTwoMessages(t *testing.T) {
 	rawInput := []byte(`<?xml version="1.0" encoding="UTF-8"?>
 		<notes>
 		   <note>
@@ -99,7 +99,7 @@ func TestTranslateTwoMessages(t *testing.T) {
 		</notes>
 			 `)
 
-	rtnData := Translate(rawInput)
+	rtnData := TranslateXML(rawInput)
 
 	expectedReturn := map[string][]map[string]interface{}{
 		"note": []map[string]interface{}{
@@ -123,12 +123,12 @@ func TestTranslateTwoMessages(t *testing.T) {
 	eq := cmp.Equal(rtnData, expectedReturn)
 
 	if !eq {
-		t.Errorf("translate return value was incorrect")
+		t.Errorf("translateXML return value was incorrect")
 		fmt.Println(cmp.Diff(expectedReturn, rtnData))
 	}
 }
 
-func TestTranslateWithParent(t *testing.T) {
+func TestTranslateXMLWithParent(t *testing.T) {
 	rawInput := []byte(`<?xml version="1.0" encoding="UTF-8"?>
 <guide>
    <name>HitchHiker</name>
@@ -151,7 +151,7 @@ func TestTranslateWithParent(t *testing.T) {
 </guide>
 			 `)
 
-	rtnData := Translate(rawInput)
+	rtnData := TranslateXML(rawInput)
 
 	expectedReturn := map[string][]map[string]interface{}{
 		"guide": []map[string]interface{}{
@@ -180,12 +180,12 @@ func TestTranslateWithParent(t *testing.T) {
 	eq := cmp.Equal(rtnData, expectedReturn)
 
 	if !eq {
-		t.Errorf("translate return value was incorrect")
+		t.Errorf("translateXML return value was incorrect")
 		fmt.Println(cmp.Diff(expectedReturn, rtnData))
 	}
 }
 
-func TestTranslateWithParentAndKey(t *testing.T) {
+func TestTranslateXMLWithParentAndKey(t *testing.T) {
 	rawInput := []byte(`<?xml version="1.0" encoding="UTF-8"?>
 <guide>
    <name>HitchHiker</name>
@@ -219,7 +219,7 @@ func TestTranslateWithParentAndKey(t *testing.T) {
 	}
 }`)
 
-	rtnData := TranslateWithKey(rawInput, gremlinKeys)
+	rtnData := TranslateXMLWithKey(rawInput, gremlinKeys)
 
 	expectedReturn := map[string][]map[string]interface{}{
 		"guide": []map[string]interface{}{
@@ -261,7 +261,7 @@ func TestTranslateWithParentAndKey(t *testing.T) {
 	eq := cmp.Equal(rtnData, expectedReturn)
 
 	if !eq {
-		t.Errorf("translate return value was incorrect")
+		t.Errorf("translateXML return value was incorrect")
 		fmt.Println(cmp.Diff(expectedReturn, rtnData))
 	}
 }

@@ -57,7 +57,7 @@ func main() {
 
 	if cmdLineOpts.GetKeyFile() == "" {
 
-		graphData := gremlin.Translate(fileData)
+		graphData := gremlin.TranslateXML(fileData)
 
 		// Commit data to disk in multiple files
 		fileutil.WriteNodes(graphData)
@@ -68,7 +68,7 @@ func main() {
 			panic(err)
 		}
 
-		graphData := gremlin.TranslateWithKey(fileData, gremlinKeys)
+		graphData := gremlin.TranslateXMLWithKey(fileData, gremlinKeys)
 
 		// Commit data to disk in multiple files
 		fileutil.WriteNodes(graphData)
