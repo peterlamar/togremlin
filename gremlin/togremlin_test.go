@@ -265,3 +265,50 @@ func TestTranslateXMLWithParentAndKey(t *testing.T) {
 		fmt.Println(cmp.Diff(expectedReturn, rtnData))
 	}
 }
+
+func TestTranslateJSON(t *testing.T) {
+	rawInput := []byte(`[
+   {
+      "timestamp": "2018-08-25T18:42:58+00:00",
+      "to": "Humans",
+      "from": "Dolphins",
+      "heading": "So Long",
+      "body": "Thanks for All the Fish!"
+   },
+   {
+      "timestamp": "2018-09-25T02:30:28+00:00",
+      "to": "Humans",
+      "from": "Douglas Adams",
+      "heading": "Space",
+      "body": "Space is big. You just won't believe how vastly, hugely, mind- bogglingly big it is. I mean, you may think it is a long way down the road to the chemists, but thats just peanuts to space."
+   }
+]`)
+
+	rtnData := TranslateJSON(rawInput)
+
+	expectedReturn := map[string][]map[string]interface{}{
+		"note": []map[string]interface{}{
+			0: map[string]interface{}{
+				"timestamp": "2018-08-25T18:42:58+00:00",
+				"to":        "Humans",
+				"from":      "Dolphins",
+				"heading":   "So Long",
+				"body":      "Thanks for All the Fish!",
+			},
+			{
+				"timestamp": "2018-09-25T02:30:28+00:00",
+				"to":        "Humans",
+				"from":      "Douglas Adams",
+				"heading":   "Space",
+				"body":      "Space is big. You just won't believe how vastly, hugely, mind- bogglingly big it is. I mean, you may think it is a long way down the road to the chemists, but thats just peanuts to space.",
+			},
+		},
+	}
+
+	eq := cmp.Equal(rtnData, expectedReturn)
+
+	if !eq {
+		t.Errorf("TestTranslateJSON return value was incorrect")
+		fmt.Println(cmp.Diff(expectedReturn, rtnData))
+	}
+}

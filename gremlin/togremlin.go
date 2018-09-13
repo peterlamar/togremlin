@@ -17,6 +17,19 @@ const gremlinEdgeTo = "_to"
 // prefix for graph edge relationship
 const graphParentVerb = "_has"
 
+func TranslateJSON(input interface{}) map[string][]map[string]interface{} {
+	rtn := make(map[string][]map[string]interface{})
+
+	switch v := input.(type) {
+	case []uint8:
+
+	default:
+		fmt.Printf("TranslateJSON doesn't handle type %T!\n", v)
+	}
+
+	return rtn
+}
+
 // TranslateXML data structure as is
 func TranslateXML(input interface{}) map[string][]map[string]interface{} {
 	rtn := make(map[string][]map[string]interface{})
