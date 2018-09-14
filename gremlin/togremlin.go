@@ -1,6 +1,7 @@
 package gremlin
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"reflect"
@@ -22,12 +23,57 @@ func TranslateJSON(input interface{}) map[string][]map[string]interface{} {
 
 	switch v := input.(type) {
 	case []uint8:
+		s := reflect.ValueOf(input)
+
+		//	jsonMap := make(map[string]interface{})
+		var tempInterface interface{}
+
+		err := json.Unmarshal(s.Bytes(), &tempInterface)
+		if err != nil {
+			panic(err)
+		}
+
+		reflectedJSON := reflect.ValueOf(tempInterface)
+
+		translateJSONNodes(reflectedJSON, "", rtn)
 
 	default:
 		fmt.Printf("TranslateJSON doesn't handle type %T!\n", v)
 	}
 
 	return rtn
+}
+
+// Travel nodes and build the gremlin graph data structure
+func translateJSONNodes(vl reflect.Value, parent string,
+	rtnMap map[string][]map[string]interface{}) {
+
+	switch vl.Kind() {
+
+	case reflect.Slice:
+		for i := 0; i < vl.Len(); i += 1 {
+			translateJSONNodes(vl.Index(i), parent, rtnMap)
+			fmt.Println("Slice ", vl.Index(i))
+		}
+	case reflect.Struct:
+		for i := 0; i < vl.NumField(); i += 1 {
+			if vl.Field(i).Kind() == reflect.String {
+				fmt.Println("Struct ", vl)
+			}
+		}
+	case reflect.Ptr:
+		reference := vl.Elem()
+		// Check if the pointer is nil
+		if !reference.IsValid() {
+			return
+		}
+
+		fmt.Println("Ptr ", vl)
+
+	default:
+
+	}
+
 }
 
 // TranslateXML data structure as is
