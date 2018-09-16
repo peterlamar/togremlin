@@ -44,34 +44,34 @@ func TranslateJSON(input interface{}) map[string][]map[string]interface{} {
 	return rtn
 }
 
+// https://gist.github.com/hvoecking/10772475
 // Travel nodes and build the gremlin graph data structure
 func translateJSONNodes(vl reflect.Value, parent string,
 	rtnMap map[string][]map[string]interface{}) {
+
+	fmt.Println("vl", vl.Kind())
 
 	switch vl.Kind() {
 
 	case reflect.Slice:
 		for i := 0; i < vl.Len(); i += 1 {
 			translateJSONNodes(vl.Index(i), parent, rtnMap)
-			fmt.Println("Slice ", vl.Index(i))
 		}
-	case reflect.Struct:
-		for i := 0; i < vl.NumField(); i += 1 {
-			if vl.Field(i).Kind() == reflect.String {
-				fmt.Println("Struct ", vl)
-			}
-		}
-	case reflect.Ptr:
-		reference := vl.Elem()
-		// Check if the pointer is nil
-		if !reference.IsValid() {
-			return
+	case reflect.Map:
+		for _, key := range vl.MapKeys() {
+			translateJSONNodes(vl.MapIndex(key), key.String(), rtnMap)
 		}
 
-		fmt.Println("Ptr ", vl)
+	case reflect.Interface:
+		for k, v := range vl.Interface().(map[string]interface{}) {
+			translateJSONNodes(reflect.ValueOf(v), k, rtnMap)
+		}
+
+	case reflect.String:
+		fmt.Println("string ", vl.String())
 
 	default:
-
+		fmt.Println("uncaught")
 	}
 
 }
