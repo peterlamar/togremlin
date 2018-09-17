@@ -49,8 +49,6 @@ func TranslateJSON(input interface{}) map[string][]map[string]interface{} {
 func translateJSONNodes(vl reflect.Value, parent string,
 	rtnMap map[string][]map[string]interface{}) {
 
-	fmt.Println("vl", vl.Kind())
-
 	switch vl.Kind() {
 
 	case reflect.Slice:
@@ -63,12 +61,27 @@ func translateJSONNodes(vl reflect.Value, parent string,
 		}
 
 	case reflect.Interface:
-		for k, v := range vl.Interface().(map[string]interface{}) {
-			translateJSONNodes(reflect.ValueOf(v), k, rtnMap)
-		}
 
-	case reflect.String:
-		fmt.Println("string ", vl.String())
+		if len(vl.Interface().(map[string]interface{})) == 1 {
+			for k, v := range vl.Interface().(map[string]interface{}) {
+				translateJSONNodes(reflect.ValueOf(v), k, rtnMap)
+			}
+		} else {
+			var grmData gremlinData
+
+			// if parent is not null and we don't have it in our map, make some room
+			makeMemoryForNode(parent, grmData, rtnMap)
+			t := make(map[string]interface{})
+
+			for k, v := range vl.Interface().(map[string]interface{}) {
+				collectValuesAndKeys(t, k, v, parent, grmData)
+			}
+			if _, ok := rtnMap[parent]; ok {
+
+				// Add node to collection
+				rtnMap[parent] = append(rtnMap[parent], t)
+			}
+		}
 
 	default:
 		fmt.Println("uncaught")
@@ -160,7 +173,7 @@ func translateXMLNodesRecursive(m map[string]interface{}, parent string,
 	t := make(map[string]interface{})
 
 	for k, v := range m {
-		collectValuesAndKeys(t, k, v, m, parent, grmData)
+		collectValuesAndKeys(t, k, v, parent, grmData)
 	}
 
 	if _, ok := rtnMap[parent]; ok {
@@ -191,7 +204,7 @@ func translateXMLNodesRecursive(m map[string]interface{}, parent string,
 
 // Collect values and keys
 func collectValuesAndKeys(t map[string]interface{}, k string, v interface{},
-	m map[string]interface{}, parent string, grmData gremlinData) {
+	parent string, grmData gremlinData) {
 
 	// If member is a string, add it
 	if _, ok := v.(string); ok {
