@@ -1,7 +1,7 @@
 # togremlin
 
 Convert data to Gremlin [Tinkerpop](http://tinkerpop.apache.org/) format for
-ingestion into gremlin format supported graph databases.
+ingestion into gremlin format supported graph databases such as [AWS Neptune](https://aws.amazon.com/neptune/) or [ArangoDB](https://www.arangodb.com/).
 
 ## Example usage
 
