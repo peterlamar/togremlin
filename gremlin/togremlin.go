@@ -124,6 +124,20 @@ func TranslateXML(input interface{}) map[string][]map[string]interface{} {
 	return rtn
 }
 
+func TranslateJSONWithKey(input interface{},
+	keys interface{}) map[string][]map[string]interface{} {
+	var rtn map[string][]map[string]interface{}
+
+	switch v := input.(type) {
+	case []uint8:
+
+	default:
+		fmt.Printf("TranslateJSONWithKey doesn't handle type %T!\n", v)
+	}
+
+	return rtn
+}
+
 // TranslateXML data structure into hash map of json array objects
 func TranslateXMLWithKey(input interface{},
 	keys interface{}) map[string][]map[string]interface{} {
@@ -144,7 +158,7 @@ func TranslateXMLWithKey(input interface{},
 		rtn = translateXMLNodes(mvj, keys, "")
 
 	default:
-		fmt.Printf("TranslateXML doesn't handle type %T!\n", v)
+		fmt.Printf("TranslateXMLWithKey doesn't handle type %T!\n", v)
 	}
 
 	return rtn

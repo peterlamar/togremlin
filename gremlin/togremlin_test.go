@@ -261,7 +261,90 @@ func TestTranslateXMLWithParentAndKey(t *testing.T) {
 	eq := cmp.Equal(rtnData, expectedReturn)
 
 	if !eq {
-		t.Errorf("translateXML return value was incorrect")
+		t.Errorf("TestTranslateXMLWithParentAndKey return value was incorrect")
+		fmt.Println(cmp.Diff(expectedReturn, rtnData))
+	}
+}
+
+func TestTranslateJSONWithParentAndKey(t *testing.T) {
+	rawInput := []byte(`{
+  "guide": {
+    "name": "HitchHiker",
+    "notes": {
+      "note": [
+        {
+          "timestamp": "2018-08-25T18:42:58+00:00",
+          "to": "Humans",
+          "from": "Dolphins",
+          "heading": "So Long",
+          "body": "Thanks for All the Fish!"
+        },
+        {
+          "timestamp": "2018-09-25T02:30:28+00:00",
+          "to": "Humans",
+          "from": "Douglas Adams",
+          "heading": "Space",
+          "body": "Space is big. You just won't believe how vastly, hugely, mind- bogglingly big it is. I mean, you may think it is a long way down the road to the chemists, but thats just peanuts to space."
+        }
+      ]
+    }
+  }
+}`)
+
+	gremlinKeys := []byte(`{
+	"guide": {
+		"name": "_key",
+		"notes": {
+			"note": {
+				"timestamp": "_key"
+			}
+		}
+	}
+}`)
+
+	rtnData := TranslateJSONWithKey(rawInput, gremlinKeys)
+
+	expectedReturn := map[string][]map[string]interface{}{
+		"guide": []map[string]interface{}{
+			0: map[string]interface{}{
+				"name": "HitchHiker",
+				"_key": "HitchHiker",
+			},
+		},
+		"_hasnote": []map[string]interface{}{
+			0: map[string]interface{}{
+				"_from": "guide/HitchHiker",
+				"_to":   "note/2018-08-25T18:42:58+00:00",
+			},
+			1: map[string]interface{}{
+				"_from": "guide/HitchHiker",
+				"_to":   "note/2018-09-25T02:30:28+00:00",
+			},
+		},
+		"note": []map[string]interface{}{
+			0: map[string]interface{}{
+				"timestamp": "2018-08-25T18:42:58+00:00",
+				"to":        "Humans",
+				"from":      "Dolphins",
+				"heading":   "So Long",
+				"body":      "Thanks for All the Fish!",
+				"_key":      "2018-08-25T18:42:58+00:00",
+			},
+			{
+				"timestamp": "2018-09-25T02:30:28+00:00",
+				"to":        "Humans",
+				"from":      "Douglas Adams",
+				"heading":   "Space",
+				"body":      "Space is big. You just won't believe how vastly, hugely, mind- bogglingly big it is. I mean, you may think it is a long way down the road to the chemists, but thats just peanuts to space.",
+				"_key":      "2018-09-25T02:30:28+00:00",
+			},
+		},
+	}
+
+	eq := cmp.Equal(rtnData, expectedReturn)
+
+	if !eq {
+		t.Errorf("TestTranslateJSONWithParentAndKey return value was incorrect")
 		fmt.Println(cmp.Diff(expectedReturn, rtnData))
 	}
 }
