@@ -25,7 +25,6 @@ func TranslateJSON(input interface{}) map[string][]map[string]interface{} {
 	case []uint8:
 		s := reflect.ValueOf(input)
 
-		//	jsonMap := make(map[string]interface{})
 		var tempInterface interface{}
 
 		err := json.Unmarshal(s.Bytes(), &tempInterface)
@@ -35,7 +34,9 @@ func TranslateJSON(input interface{}) map[string][]map[string]interface{} {
 
 		reflectedJSON := reflect.ValueOf(tempInterface)
 
-		translateJSONNodes(reflectedJSON, "", rtn)
+		var emptyGrmData gremlinData
+
+		translateJSONNodesRecursive(reflectedJSON, "", emptyGrmData, rtn)
 
 	default:
 		fmt.Printf("TranslateJSON doesn't handle type %T!\n", v)
@@ -46,25 +47,25 @@ func TranslateJSON(input interface{}) map[string][]map[string]interface{} {
 
 // https://gist.github.com/hvoecking/10772475
 // Travel nodes and build the gremlin graph data structure
-func translateJSONNodes(vl reflect.Value, parent string,
-	rtnMap map[string][]map[string]interface{}) {
+func translateJSONNodesRecursive(vl reflect.Value, parent string,
+	grmData gremlinData, rtnMap map[string][]map[string]interface{}) {
 
 	switch vl.Kind() {
 
 	case reflect.Slice:
 		for i := 0; i < vl.Len(); i += 1 {
-			translateJSONNodes(vl.Index(i), parent, rtnMap)
+			translateJSONNodesRecursive(vl.Index(i), parent, grmData, rtnMap)
 		}
 	case reflect.Map:
 		for _, key := range vl.MapKeys() {
-			translateJSONNodes(vl.MapIndex(key), key.String(), rtnMap)
+			translateJSONNodesRecursive(vl.MapIndex(key), key.String(), grmData, rtnMap)
 		}
 
 	case reflect.Interface:
 
 		if len(vl.Interface().(map[string]interface{})) == 1 {
 			for k, v := range vl.Interface().(map[string]interface{}) {
-				translateJSONNodes(reflect.ValueOf(v), k, rtnMap)
+				translateJSONNodesRecursive(reflect.ValueOf(v), k, grmData, rtnMap)
 			}
 		} else {
 			var grmData gremlinData
@@ -131,11 +132,37 @@ func TranslateJSONWithKey(input interface{},
 	switch v := input.(type) {
 	case []uint8:
 
+		s := reflect.ValueOf(input)
+
+		var tempInterface interface{}
+
+		err := json.Unmarshal(s.Bytes(), &tempInterface)
+		if err != nil {
+			panic(err)
+		}
+
+		reflectedJSON := reflect.ValueOf(tempInterface)
+
+		rtn = translateJSONNodes(reflectedJSON, keys, "")
+
 	default:
 		fmt.Printf("TranslateJSONWithKey doesn't handle type %T!\n", v)
 	}
 
 	return rtn
+}
+
+func translateJSONNodes(vl reflect.Value, keyFile interface{},
+	parent string) map[string][]map[string]interface{} {
+
+	grmData := getKeyData(keyFile)
+
+	rtn := make(map[string][]map[string]interface{})
+
+	translateJSONNodesRecursive(vl, "", grmData, rtn)
+
+	return rtn
+
 }
 
 // TranslateXML data structure into hash map of json array objects
